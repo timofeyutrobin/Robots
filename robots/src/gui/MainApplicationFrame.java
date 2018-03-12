@@ -1,18 +1,9 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
 import log.Logger;
 
@@ -25,6 +16,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -36,7 +28,17 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        
+
+        JButton button = new JButton();
+        button.setBounds(screenSize.width - 150,50,100,50);
+        button.setText("Exit");
+        button.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        desktopPane.add(button);
         
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
@@ -46,7 +48,26 @@ public class MainApplicationFrame extends JFrame
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exitOnDialog(e);
+            }
+        });
+    }
+
+    protected void exitOnDialog(WindowEvent e){
+        Object[] options = { "Да", "Нет!" };
+        int n = JOptionPane.showOptionDialog(e.getWindow(), "Закрыть окно?",
+                "Подтверждение", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options,
+                options[0]);
+        if (n == 0) {
+            e.getWindow().setVisible(false);
+            System.exit(0);
+        }
     }
     
     protected LogWindow createLogWindow()
