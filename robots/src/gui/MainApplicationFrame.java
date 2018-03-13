@@ -17,7 +17,7 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-    
+
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
@@ -32,12 +32,7 @@ public class MainApplicationFrame extends JFrame
         JButton button = new JButton();
         button.setBounds(screenSize.width - 150,50,100,50);
         button.setText("Exit");
-        button.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        button.addActionListener(e -> processWindowEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING)));
         desktopPane.add(button);
         
         LogWindow logWindow = createLogWindow();
