@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 
 import log.Logger;
@@ -17,24 +16,26 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
-        int inset = 50;        
+        int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
             screenSize.width  - inset*2,
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
+        setTitle("Robots");
 
-        JButton button = new JButton();
-        button.setBounds(screenSize.width - 150,50,100,50);
-        button.setText("Exit");
-        button.addActionListener(e -> processWindowEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING)));
-        desktopPane.add(button);
-        
+        JButton exitButton = new JButton();
+        exitButton.setLocation(getWidth() - 150, 50);
+        exitButton.setSize(100,50);
+        exitButton.setText("Exit");
+        exitButton.addActionListener(e -> processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+        exitButton.setVisible(true);
+        desktopPane.add(exitButton);
+
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
@@ -43,28 +44,32 @@ public class MainApplicationFrame extends JFrame
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
+
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                exitOnDialog(e);
+                exitWithDialog(e);
             }
         });
+        pack();
+        setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
     }
 
-    protected void exitOnDialog(WindowEvent e){
-        Object[] options = { "Да", "Нет!" };
-        int n = JOptionPane.showOptionDialog(e.getWindow(), "Закрыть окно?",
+    private void exitWithDialog(WindowEvent event) {
+        Object[] options = { "Да", "Нет" };
+        int chosenOption = JOptionPane.showOptionDialog(event.getWindow(), "Закрыть окно?",
                 "Подтверждение", JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options,
-                options[0]);
-        if (n == 0) {
-            e.getWindow().setVisible(false);
-            System.exit(0);
+                options[1]);
+        if (chosenOption == 0) {
+            event.getWindow().setVisible(false);
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         }
     }
-    
+
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
@@ -113,46 +118,30 @@ public class MainApplicationFrame extends JFrame
     
     private JMenuBar generateMenuBar()
     {
-        JMenuBar menuBar = new JMenuBar();
-        
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
-        
-        {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
-        }
+        MenuBar menuBar = new MenuBar();
 
-        {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
+        JMenu lookAndFeelMenu = menuBar.createMenu("Режим отображения", KeyEvent.VK_V, "Управление режимом отображения приложения");
+        JMenuItem systemLookItem = menuBar.addItem(lookAndFeelMenu, "Системная схема", KeyEvent.VK_S);
+        JMenuItem crossplatformLookItem = menuBar.addItem(lookAndFeelMenu, "Универсальная схема", KeyEvent.VK_U);
 
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
-        
-        {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
-            });
-            testMenu.add(addLogMessageItem);
-        }
+        JMenu testMenu = menuBar.createMenu("Тесты", KeyEvent.VK_T, "Тестовые команды");
+        JMenuItem logMessageItem = menuBar.addItem(testMenu, "Сообщение в лог", KeyEvent.VK_M);
 
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
+        JMenu otherMenu = menuBar.createMenu("Другое", KeyEvent.VK_O, null);
+        JMenuItem exitItem = menuBar.addItem(otherMenu, "Выход", KeyEvent.VK_Q);
+
+        systemLookItem.addActionListener(e -> {
+            setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            this.invalidate();
+        });
+        crossplatformLookItem.addActionListener(e -> {
+            setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            this.invalidate();
+        });
+        logMessageItem.addActionListener(e -> Logger.debug("Тук-тук"));
+        exitItem.addActionListener(e -> processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+
+        menuBar.addMenus(lookAndFeelMenu, testMenu, otherMenu);
         return menuBar;
     }
     
