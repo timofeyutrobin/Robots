@@ -1,24 +1,23 @@
 package logic;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameMap {
-    private Robot robot;
+    private List<Robot> robots;
     private List<Obstacle> obstacles;
     private Target target;
 
-    private Point robotPosition;
-    private Point targetPosition;
-
     private static final double velocity = 0.1;
 
-    //сейчас он создает дефолтную карту
     public GameMap() {
+        robots = new ArrayList<>();
         obstacles = new ArrayList<>();
 
-        robot = new Robot(100, 100);
+        robots.add(new Robot(100, 100));
         target = new Target(150, 100);
     }
 
@@ -26,19 +25,31 @@ public class GameMap {
         target.setPosition(position);
     }
 
+    public void addRobot(Point point) {
+        robots.add(new Robot(point.x, point.y));
+    }
+
     public void update() {
-        double distance = Utils.distance(target.getX(), target.getY(),
-                robot.getX(), robot.getY());
-        if (distance < 0.5)
-        {
-            return;
+        for (Robot robot : robots) {
+            double distance = Utils.distance(target.getX(), target.getY(),
+                    robot.getX(), robot.getY());
+            if (distance < 0.5) {
+                continue;
+            }
+            robot.setDirection(Utils.angleTo(robot.getX(), robot.getY(), target.getX(), target.getY()));
+            robot.moveRobot(velocity, 50);
         }
-        robot.setDirection(Utils.angleTo(robot.getX(), robot.getY(), target.getX(), target.getY()));
-        robot.moveRobot(velocity,50);
     }
 
     public void draw(Graphics2D g) {
-        robot.draw(g, robot.getDirection());
+        for (Robot robot :
+                robots) {
+            robot.draw(g, robot.getDirection());
+        }
         target.draw(g);
+    }
+
+    public void addObstacle(Point point) {
+        // TODO: 30.05.2018 create method
     }
 }

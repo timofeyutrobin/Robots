@@ -28,10 +28,10 @@ public class MainApplicationFrame extends JFrame
         setContentPane(desktopPane);
         setTitle("Robots");
 
-        JButton exitButton = new JButton();
-        exitButton.setLocation(getWidth() - 150, 50);
+
+        JButton exitButton = new JButton("Выход");
+        exitButton.setLocation(getWidth() - 50, 25);
         exitButton.setSize(100,50);
-        exitButton.setText("Exit");
         exitButton.addActionListener(e -> processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
         exitButton.setVisible(true);
         desktopPane.add(exitButton);

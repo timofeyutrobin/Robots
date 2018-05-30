@@ -26,14 +26,6 @@ public class Robot {
         return direction;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
     public void setDirection(double direction) {
         this.direction = direction;
     }

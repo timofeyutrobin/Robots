@@ -14,7 +14,15 @@ import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel
 {
+    public enum Mode {
+        SET_TARGET_MODE,
+        ADD_ROBOT_MODE,
+        ADD_OBSTACLE_MODE
+    }
+
     private final Timer m_timer = initTimer();
+    private GameMap gameMap = new GameMap();
+    private Mode mode = Mode.SET_TARGET_MODE;
     
     private static Timer initTimer() 
     {
@@ -22,8 +30,6 @@ public class GameVisualizer extends JPanel
         return timer;
     }
 
-    private GameMap gameMap = new GameMap();
-    
     public GameVisualizer()
     {
         m_timer.schedule(new TimerTask()
@@ -47,9 +53,20 @@ public class GameVisualizer extends JPanel
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                //setTargetPosition(e.getPoint());
-                gameMap.setTargetPosition(e.getPoint());
-                repaint();
+                switch (mode) {
+                    case SET_TARGET_MODE : {
+                        gameMap.setTargetPosition(e.getPoint());
+                        break;
+                    }
+                    case ADD_ROBOT_MODE : {
+                        gameMap.addRobot(e.getPoint());
+                        break;
+                    }
+                    case ADD_OBSTACLE_MODE : {
+                        gameMap.addObstacle(e.getPoint());
+                        break;
+                    }
+                }
             }
         });
         setDoubleBuffered(true);
@@ -71,5 +88,9 @@ public class GameVisualizer extends JPanel
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
         gameMap.draw(g2d);
+    }
+
+    void setMode(Mode mode) {
+        this.mode = mode;
     }
 }

@@ -20,7 +20,7 @@ public class Target {
         return y;
     }
 
-    public void setPosition (Point position) {
+    public void setPosition(Point position) {
         x = position.x;
         y = position.y;
     }
