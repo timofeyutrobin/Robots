@@ -17,7 +17,8 @@ public class GameVisualizer extends JPanel
     public enum Mode {
         SET_TARGET_MODE,
         ADD_ROBOT_MODE,
-        ADD_OBSTACLE_MODE
+        ADD_OBSTACLE_MODE,
+        REMOVE_OBSTACLE_MODE
     }
 
     private final Timer m_timer = initTimer();
@@ -65,6 +66,9 @@ public class GameVisualizer extends JPanel
                     case ADD_OBSTACLE_MODE : {
                         gameMap.addObstacle(e.getPoint());
                         break;
+                    }
+                    case REMOVE_OBSTACLE_MODE: {
+                        gameMap.removeObstacle(e.getPoint());
                     }
                 }
             }

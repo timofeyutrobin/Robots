@@ -37,9 +37,12 @@ public class Robot {
         y = newY;
     }
 
-    public void draw(Graphics2D g, double direction) {
+    public void draw(Graphics2D g) {
         int robotCenterX = Utils.round(x);
         int robotCenterY = Utils.round(y);
+
+        AffineTransform noTransform = g.getTransform();
+
         AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
@@ -50,5 +53,7 @@ public class Robot {
         Utils.fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
         g.setColor(Color.BLACK);
         Utils.drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+
+        g.setTransform(noTransform);
     }
 }

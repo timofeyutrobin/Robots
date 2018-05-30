@@ -1,8 +1,6 @@
 package logic;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +27,20 @@ public class GameMap {
         robots.add(new Robot(point.x, point.y));
     }
 
+    public void addObstacle(Point point) {
+        //не добавляем препятствие, которое может перекрыть робота
+        for (Robot robot : robots) {
+            if (Utils.distance(robot.getX(), robot.getY(), point.x, point.y) <= Obstacle.DIAGONAL / 2) {
+                return;
+            }
+        }
+        obstacles.add(new Obstacle(point.x, point.y));
+    }
+
+    public void removeObstacle(Point point) {
+        obstacles.removeIf(obstacle -> obstacle.contains(point));
+    }
+
     public void update() {
         for (Robot robot : robots) {
             double distance = Utils.distance(target.getX(), target.getY(),
@@ -42,14 +54,12 @@ public class GameMap {
     }
 
     public void draw(Graphics2D g) {
-        for (Robot robot :
-                robots) {
-            robot.draw(g, robot.getDirection());
-        }
         target.draw(g);
-    }
-
-    public void addObstacle(Point point) {
-        // TODO: 30.05.2018 create method
+        for (Robot robot : robots) {
+            robot.draw(g);
+        }
+        for (Obstacle obstacle : obstacles) {
+            obstacle.draw(g);
+        }
     }
 }

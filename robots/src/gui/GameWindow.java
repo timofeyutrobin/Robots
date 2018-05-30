@@ -8,7 +8,7 @@ public class GameWindow extends JInternalFrame
 {
     private final GameVisualizer m_visualizer;
 
-    public GameWindow() 
+    public GameWindow()
     {
         super("Игровое поле", true, true, true, true);
         m_visualizer = new GameVisualizer();
@@ -27,10 +27,15 @@ public class GameWindow extends JInternalFrame
         newRobotButton.setVisible(true);
         subPanel.add(newRobotButton);
 
-        JButton newObstacleButton = new JButton("Новый прямоугольник");
+        JButton newObstacleButton = new JButton("Новое препятствие");
         newObstacleButton.addActionListener(e -> m_visualizer.setMode(GameVisualizer.Mode.ADD_OBSTACLE_MODE));
         newObstacleButton.setVisible(true);
         subPanel.add(newObstacleButton);
+
+        JButton removeObstacleButton = new JButton("Стереть препятствие");
+        removeObstacleButton.addActionListener(e -> m_visualizer.setMode(GameVisualizer.Mode.REMOVE_OBSTACLE_MODE));
+        removeObstacleButton.setVisible(true);
+        subPanel.add(removeObstacleButton);
 
         panel.add(subPanel, BorderLayout.NORTH);
         getContentPane().add(panel);
