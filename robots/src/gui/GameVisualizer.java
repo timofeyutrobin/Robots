@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel
 {
-    public enum Mode {
+    public enum MouseMode {
         SET_TARGET_MODE,
         ADD_ROBOT_MODE,
         ADD_OBSTACLE_MODE,
@@ -23,7 +23,7 @@ public class GameVisualizer extends JPanel
 
     private final Timer m_timer = initTimer();
     private GameMap gameMap = new GameMap();
-    private Mode mode = Mode.SET_TARGET_MODE;
+    private MouseMode mouseMode = MouseMode.SET_TARGET_MODE;
     
     private static Timer initTimer() 
     {
@@ -52,9 +52,9 @@ public class GameVisualizer extends JPanel
         addMouseListener(new MouseAdapter()
         {
             @Override
-            public void mouseClicked(MouseEvent e)
+            public void mouseReleased(MouseEvent e)
             {
-                switch (mode) {
+                switch (mouseMode) {
                     case SET_TARGET_MODE : {
                         gameMap.setTargetPosition(e.getPoint());
                         break;
@@ -94,7 +94,7 @@ public class GameVisualizer extends JPanel
         gameMap.draw(g2d);
     }
 
-    void setMode(Mode mode) {
-        this.mode = mode;
+    void setMouseMode(MouseMode mouseMode) {
+        this.mouseMode = mouseMode;
     }
 }

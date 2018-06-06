@@ -1,19 +1,41 @@
 package logic;
 
 import java.awt.*;
+import java.util.ArrayList;
 
-public class Obstacle extends Rectangle {
-    public static final int WIDTH = 100;
-    public static final int HEIGHT = 50;
-    public static final double DIAGONAL = Math.sqrt(WIDTH*WIDTH + HEIGHT*HEIGHT);
+class Obstacle extends Rectangle {
+    static final int WIDTH = 100;
+    static final int HEIGHT = 50;
+    static final double DIAGONAL = Math.sqrt(WIDTH*WIDTH + HEIGHT*HEIGHT);
 
-    public Obstacle(int x, int y) {
+    //точки для создания графа
+    private Point leftUp;
+    private Point leftDown;
+    private Point rightUp;
+    private Point rightDown;
+
+    Obstacle(int x, int y) {
         super(WIDTH, HEIGHT);
+        leftUp = new Point((x - width / 2) - 5, (y - height / 2) - 5);
+        leftDown = new Point((x - width / 2) - 5, (y + height / 2) + 5);
+        rightUp = new Point((x + width / 2) + 5, (y - height / 2) - 5);
+        rightDown = new Point((x + width / 2) + 5, (y + height / 2) + 5);
+
         setLocation(x - width / 2, y - height / 2);
     }
 
-    public void draw(Graphics2D g) {
+    public ArrayList<Point> getCornerPoints() {
+        ArrayList<Point> points = new ArrayList<>();
+        points.add(leftUp);
+        points.add(rightUp);
+        points.add(leftDown);
+        points.add(rightDown);
+        return points;
+    }
+
+    void draw(Graphics2D g) {
         g.setColor(Color.BLACK);
         g.fillRect(x, y, width, height);
+        g.setColor(Color.BLUE);
     }
 }

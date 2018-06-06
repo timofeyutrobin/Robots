@@ -1,33 +1,26 @@
 package logic;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
-public class Target {
+class Target {
     private int x;
     private int y;
 
-    public Target(int x, int y) {
+    Target(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
-        return x;
+    Point getPosition() {
+        return new Point(x, y);
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setPosition(Point position) {
+    void setPosition(Point position) {
         x = position.x;
         y = position.y;
     }
 
-    public void draw(Graphics2D g) {
-        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
-        g.setTransform(t);
+    void draw(Graphics2D g) {
         g.setColor(Color.GREEN);
         Utils.fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);

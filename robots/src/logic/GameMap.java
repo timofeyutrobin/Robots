@@ -1,13 +1,13 @@
 package logic;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GameMap {
-    private List<Robot> robots;
-    private List<Obstacle> obstacles;
-    private Target target;
+    private static ArrayList<Robot> robots;
+    private static ArrayList<Obstacle> obstacles;
+    private static Target target;
 
     private static final double velocity = 0.1;
 
@@ -15,42 +15,44 @@ public class GameMap {
         robots = new ArrayList<>();
         obstacles = new ArrayList<>();
 
-        robots.add(new Robot(100, 100));
         target = new Target(150, 100);
+        addRobot(new Point(100, 100));
     }
 
-    public void setTargetPosition(Point position) {
+    public synchronized void setTargetPosition(Point position) {
+        if (obstacles.stream().anyMatch(o -> o.contains(position))) {
+            return;
+        }
         target.setPosition(position);
+        robots.forEach(robot -> robot.updateRoute(obstacles, target));
     }
 
-    public void addRobot(Point point) {
-        robots.add(new Robot(point.x, point.y));
+    public synchronized void addRobot(Point position) {
+        if (obstacles.stream().anyMatch(o -> o.contains(position))) {
+            return;
+        }
+        Robot robot = new Robot(position.x, position.y);
+        robot.updateRoute(obstacles, target);
+        robots.add(robot);
     }
 
-    public void addObstacle(Point point) {
-        //не добавляем препятствие, которое может перекрыть робота
+    public synchronized void addObstacle(Point point) {
         for (Robot robot : robots) {
             if (Utils.distance(robot.getX(), robot.getY(), point.x, point.y) <= Obstacle.DIAGONAL / 2) {
                 return;
             }
         }
         obstacles.add(new Obstacle(point.x, point.y));
+        robots.forEach(robot -> robot.updateRoute(obstacles, target));
     }
 
-    public void removeObstacle(Point point) {
+    public synchronized void removeObstacle(Point point) {
         obstacles.removeIf(obstacle -> obstacle.contains(point));
+        robots.forEach(robot -> robot.updateRoute(obstacles, target));
     }
 
-    public void update() {
-        for (Robot robot : robots) {
-            double distance = Utils.distance(target.getX(), target.getY(),
-                    robot.getX(), robot.getY());
-            if (distance < 0.5) {
-                continue;
-            }
-            robot.setDirection(Utils.angleTo(robot.getX(), robot.getY(), target.getX(), target.getY()));
-            robot.moveRobot(velocity, 50);
-        }
+    public synchronized void update() {
+        robots.forEach(robot -> robot.moveRobot(velocity, 10));
     }
 
     public void draw(Graphics2D g) {
@@ -61,5 +63,17 @@ public class GameMap {
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(g);
         }
+    }
+
+    static boolean checkPath(Point p1, Point p2) {
+        if (p1.equals(p2)) {
+            return false;
+        }
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.intersectsLine(new Line2D.Double(p1.x, p1.y, p2.x, p2.y))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
