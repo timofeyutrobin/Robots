@@ -1,10 +1,11 @@
 package gui;
 
 import java.awt.*;
+import java.io.*;
 
 import javax.swing.*;
 
-public class GameWindow extends JInternalFrame
+public class GameWindow extends JInternalFrame implements Serializable
 {
     private final GameVisualizer m_visualizer;
 
@@ -42,5 +43,13 @@ public class GameWindow extends JInternalFrame
         panel.add(subPanel, BorderLayout.NORTH);
         getContentPane().add(panel);
         pack();
+    }
+
+    void save() {
+        m_visualizer.save();
+    }
+
+    void loadMap() {
+        m_visualizer.load();
     }
 }

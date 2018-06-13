@@ -15,6 +15,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final GameWindow gameWindow = new GameWindow();
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -39,7 +40,6 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = new GameWindow();
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -128,6 +128,10 @@ public class MainApplicationFrame extends JFrame
 
         JMenu otherMenu = menuBar.createMenu("Другое", KeyEvent.VK_O, null);
         JMenuItem exitItem = menuBar.addItem(otherMenu, "Выход", KeyEvent.VK_Q);
+        JMenuItem saveItem = menuBar.addItem(otherMenu, "Сохранить");
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+        JMenuItem loadItem = menuBar.addItem(otherMenu, "Загрузить");
+        loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
 
         systemLookItem.addActionListener(e -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -139,6 +143,8 @@ public class MainApplicationFrame extends JFrame
         });
         logMessageItem.addActionListener(e -> Logger.debug("Тук-тук"));
         exitItem.addActionListener(e -> processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+        saveItem.addActionListener(e -> gameWindow.save());
+        loadItem.addActionListener(e -> gameWindow.loadMap());
 
         menuBar.addMenus(lookAndFeelMenu, testMenu, otherMenu);
         return menuBar;

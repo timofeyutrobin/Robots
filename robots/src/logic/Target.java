@@ -1,8 +1,9 @@
 package logic;
 
 import java.awt.*;
+import java.io.Serializable;
 
-class Target {
+class Target implements Serializable {
     private int x;
     private int y;
 

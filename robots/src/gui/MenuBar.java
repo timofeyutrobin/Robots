@@ -22,4 +22,10 @@ class MenuBar extends JMenuBar {
         menu.add(item);
         return item;
     }
+
+    JMenuItem addItem(JMenu menu, String itemName) {
+        JMenuItem item = new JMenuItem(itemName);
+        menu.add(item);
+        return item;
+    }
 }

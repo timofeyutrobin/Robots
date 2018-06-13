@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,6 +15,8 @@ import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel
 {
+    static final String GAME_MAP_FILE = "robots/data/game.dat";
+
     public enum MouseMode {
         SET_TARGET_MODE,
         ADD_ROBOT_MODE,
@@ -96,5 +99,25 @@ public class GameVisualizer extends JPanel
 
     void setMouseMode(MouseMode mouseMode) {
         this.mouseMode = mouseMode;
+    }
+
+    void save() {
+        File file = new File(GAME_MAP_FILE);
+        try(FileOutputStream fos = new FileOutputStream(file); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(gameMap);
+            oos.flush();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void load() {
+        try (FileInputStream fis = new FileInputStream(GAME_MAP_FILE); ObjectInputStream ois = new ObjectInputStream(fis)) {
+            gameMap = (GameMap) ois.readObject();
+        }
+        catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Dijkstra {
 
-    public static Deque<Point> getRoute(Point start, Point finish, Map<Point, ArrayList<Point>> graph) {
+    public static Deque<Point> getRoute(Point start, Point finish, Map<Point, ArrayList<Point>> graph, ArrayList<Obstacle> obstacles) {
         ArrayList<Point> nodes = new ArrayList<>(graph.keySet());
         Map<Point, Double> distance = new HashMap<>();
         Map<Point, Point> parent = new HashMap<>();
@@ -37,7 +37,7 @@ public class Dijkstra {
                 }
             }
         }
-        if (!GameMap.checkPath(parent.get(finish), finish)) return null;
+        if (!GameMap.checkPath(parent.get(finish), finish, obstacles)) return null;
         route.push(finish);
         while (finish != start) {
             finish = parent.get(finish);

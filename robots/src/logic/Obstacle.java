@@ -1,9 +1,10 @@
 package logic;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-class Obstacle extends Rectangle {
+class Obstacle extends Rectangle implements Serializable {
     static final int WIDTH = 100;
     static final int HEIGHT = 50;
     static final double DIAGONAL = Math.sqrt(WIDTH*WIDTH + HEIGHT*HEIGHT);

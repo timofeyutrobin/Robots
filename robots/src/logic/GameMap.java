@@ -2,12 +2,13 @@ package logic;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.io.*;
 import java.util.ArrayList;
 
-public class GameMap {
-    private static ArrayList<Robot> robots;
-    private static ArrayList<Obstacle> obstacles;
-    private static Target target;
+public class GameMap implements Serializable {
+    private ArrayList<Robot> robots;
+    private ArrayList<Obstacle> obstacles;
+    private Target target;
 
     private static final double velocity = 0.1;
 
@@ -65,7 +66,7 @@ public class GameMap {
         }
     }
 
-    static boolean checkPath(Point p1, Point p2) {
+    static boolean checkPath(Point p1, Point p2, ArrayList<Obstacle> obstacles) {
         if (p1.equals(p2)) {
             return false;
         }

@@ -2,9 +2,10 @@ package logic;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.io.Serializable;
 import java.util.*;
 
-class Robot {
+class Robot implements Serializable {
     private volatile double x;
     private volatile double y;
     private double direction;
@@ -35,7 +36,7 @@ class Robot {
         Point position = getPosition();
         if (position.equals(target.getPosition())) return;
         makeGraph(obstacles, target);
-        route = Dijkstra.getRoute(position, target.getPosition(), graph);
+        route = Dijkstra.getRoute(position, target.getPosition(), graph, obstacles);
         if (route == null) {
             stopped = true;
             return;
@@ -93,7 +94,7 @@ class Robot {
         for (Point point : nodes) {
             ArrayList<Point> incident = new ArrayList<>();
             for (Point anotherPoint : nodes) {
-                if (GameMap.checkPath(point, anotherPoint)) {
+                if (GameMap.checkPath(point, anotherPoint, obstacles)) {
                     incident.add(anotherPoint);
                 }
             }
