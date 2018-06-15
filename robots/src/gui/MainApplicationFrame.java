@@ -5,17 +5,13 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import log.Logger;
+import net.Client;
+import net.Server;
 
-/**
- * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается. 
- * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
- */
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private final GameWindow gameWindow = new GameWindow();
+    private final GameWindow gameWindow = createGameWindow();
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -79,41 +75,32 @@ public class MainApplicationFrame extends JFrame
         Logger.debug("Протокол работает");
         return logWindow;
     }
+
+    protected GameWindow createGameWindow() {
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setLocation(230, 10);
+        return gameWindow;
+    }
     
     protected void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
+
+    private void startServer() {
+        Server server = new Server(gameWindow);
+        String message = "IP: " + server.getIpAddress();
+        JOptionPane.showMessageDialog(this, message,
+                "Сервер ожидает подключение", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void startClient() {
+        String ip = JOptionPane.showInputDialog(this,
+                "Введите IP-адрес компьютера, к которому хотите подключиться.\n(localhost - собственный компьютер)");
+        if (ip == null) return;
+        new Client(gameWindow, ip);
+    }
     
     private JMenuBar generateMenuBar()
     {
@@ -133,6 +120,10 @@ public class MainApplicationFrame extends JFrame
         JMenuItem loadItem = menuBar.addItem(otherMenu, "Загрузить");
         loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
 
+        JMenu netMenu = menuBar.createMenu("Сеть", KeyEvent.VK_N, "Сетевые функции");
+        JMenuItem getConnectionItem = menuBar.addItem(netMenu, "Принять подключение");
+        JMenuItem connectItem = menuBar.addItem(netMenu, "Подключиться");
+
         systemLookItem.addActionListener(e -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             this.invalidate();
@@ -143,10 +134,18 @@ public class MainApplicationFrame extends JFrame
         });
         logMessageItem.addActionListener(e -> Logger.debug("Тук-тук"));
         exitItem.addActionListener(e -> processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
-        saveItem.addActionListener(e -> gameWindow.save());
-        loadItem.addActionListener(e -> gameWindow.loadMap());
+        saveItem.addActionListener(e -> {
+            gameWindow.saveMap();
+            JOptionPane.showMessageDialog(this, "Карта сохранена");
+        });
+        loadItem.addActionListener(e -> {
+            gameWindow.loadMap();
+            JOptionPane.showMessageDialog(this, "Карта загружена из файла");
+        });
+        getConnectionItem.addActionListener(e -> startServer());
+        connectItem.addActionListener(e -> startClient());
 
-        menuBar.addMenus(lookAndFeelMenu, testMenu, otherMenu);
+        menuBar.addMenus(lookAndFeelMenu, testMenu, otherMenu, netMenu);
         return menuBar;
     }
     

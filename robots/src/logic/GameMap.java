@@ -77,4 +77,32 @@ public class GameMap implements Serializable {
         }
         return true;
     }
+
+    //debug
+    public void writeStatistics(StringBuffer sb) {
+        sb.append("Координаты роботов:\r\n");
+        robots.forEach(robot -> {
+            sb.append("(");
+            sb.append(robot.getX());
+            sb.append(", ");
+            sb.append(robot.getY());
+            sb.append(")");
+            sb.append("\r\n");
+        });
+        sb.append("Координаты препятствий:\r\n");
+        obstacles.forEach(obstacle -> {
+            obstacle.getCornerPoints().forEach(point -> {
+                sb.append("(");
+                sb.append(point.x);
+                sb.append(", ");
+                sb.append(point.y);
+                sb.append(") | ");
+            });
+            sb.append("\r\n");
+        });
+        sb.append("Координаты точки: ");
+        sb.append(target.getPosition());
+        sb.append("\r\n");
+        sb.append("----------------");
+    }
 }

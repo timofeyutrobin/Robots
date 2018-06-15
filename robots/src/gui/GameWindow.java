@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.*;
 import java.io.*;
+import java.net.Socket;
 
 import javax.swing.*;
 
@@ -45,11 +46,19 @@ public class GameWindow extends JInternalFrame implements Serializable
         pack();
     }
 
-    void save() {
+    void saveMap() {
         m_visualizer.save();
     }
 
     void loadMap() {
-        m_visualizer.load();
+        m_visualizer.loadFromFile();
+    }
+
+    public void sendMap(Socket socket) {
+        m_visualizer.sendToSocket(socket);
+    }
+
+    public void getMap(Socket socket) {
+        m_visualizer.getFromSocket(socket);
     }
 }

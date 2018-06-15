@@ -1,5 +1,6 @@
 package gui;
 
+import log.Logger;
 import logic.GameMap;
 
 import java.awt.EventQueue;
@@ -8,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -112,9 +114,32 @@ public class GameVisualizer extends JPanel
         }
     }
 
-    void load() {
+    void loadFromFile() {
         try (FileInputStream fis = new FileInputStream(GAME_MAP_FILE); ObjectInputStream ois = new ObjectInputStream(fis)) {
             gameMap = (GameMap) ois.readObject();
+        }
+        catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void sendToSocket(Socket socket) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()))) {
+            oos.writeObject(gameMap);
+            oos.flush();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void getFromSocket(Socket socket) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()))) {
+            gameMap = (GameMap) in.readObject();
+            //вывод информации в окно лога
+            StringBuffer sb = new StringBuffer();
+            gameMap.writeStatistics(sb);
+            Logger.debug(sb.toString());
         }
         catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
